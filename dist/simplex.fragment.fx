@@ -135,7 +135,7 @@ void main() {
 	for(int i = 0; i < nbDomainWarping; i++) {
 		samplePoint += domainWarpingStrength * vec3(
 			completeNoise(samplePoint, nbOctaves, decay, lacunarity), 
-			completeNoise(vec3(samplePoint.y + 10000.0, samplePoint.z + 37.0, samplePoint.x - 73.0), nbOctaves, decay, lacunarity), 
+			completeNoise(vec3(samplePoint.x + 13.0, samplePoint.y + 37.0, samplePoint.z - 73.0), nbOctaves, decay, lacunarity), 
 			0.0
 		) / float(nbDomainWarping);
 	}
