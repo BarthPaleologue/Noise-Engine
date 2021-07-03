@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script defer src="../include/babylon4.js"></script>
+    <script defer src="../include/slider.min.js"></script>
+    <link rel="stylesheet" href="../include/style2.min.css">
+    <script defer type="module" src="./main.js"></script>
+    <title>Shader</title>
+    <style>
+        html,
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+
+        #ui {
+            font-family: sans-serif;
+            position: absolute;
+            top: 0;
+            right: 0;
+            height: 100vh;
+            width: 300px;
+            overflow: auto;
+        }
+
+        #ui h2 {
+            margin-block-end: 0;
+        }
+
+        /* Customize the label (the container) */
+        .container {
+            display: block;
+            position: relative;
+            padding-left: 35px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            font-size: 22px;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        /* Hide the browser's default checkbox */
+        .container input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0;
+            width: 0;
+        }
+
+        /* Create a custom checkbox */
+        .checkmark {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 25px;
+            width: 25px;
+            background-color: #eee;
+        }
+
+        /* On mouse-over, add a grey background color */
+        .container:hover input~.checkmark {
+            background-color: #ccc;
+        }
+
+        /* When the checkbox is checked, add a blue background */
+        .container input:checked~.checkmark {
+            background-color: #2196F3;
+        }
+
+        /* Create the checkmark/indicator (hidden when not checked) */
+        .checkmark:after {
+            content: "";
+            position: absolute;
+            display: none;
+        }
+
+        /* Show the checkmark when checked */
+        .container input:checked~.checkmark:after {
+            display: block;
+        }
+
+        /* Style the checkmark/indicator */
+        .container .checkmark:after {
+            left: 9px;
+            top: 5px;
+            width: 5px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 3px 3px 0;
+            -webkit-transform: rotate(45deg);
+            -ms-transform: rotate(45deg);
+            transform: rotate(45deg);
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="renderer"></canvas>
+    <div id="ui">
+        <h1>Settings</h1>
+        <div id="levelLineToggler" class="container">
+            <p>Level Lines</p>
+            <input type="checkbox">
+            <span class="checkmark"></span>
+        </div>
+        <h2>Frequency</h2>
+        <div id="frequencySliderContainer"></div>
+        <h2>Octaves</h2>
+        <div id="octaveSliderContainer"></div>
+        <h2>Decay</h2>
+        <div id="decaySliderContainer"></div>
+        <h2>Lacunarity</h2>
+        <div id="lacunaritySliderContainer"></div>
+        <h2>Power</h2>
+        <div id="powerSliderContainer"></div>
+        <h2>Domain Warping</h2>
+        <div id="domainWarpingSliderContainer"></div>
+        <h2>Domain Warping Strength</h2>
+        <div id="domainWarpingStrengthSliderContainer"></div>
+        <h2>Level Lines Amount</h2>
+        <div id="levelLinesSliderContainer"></div>
+    </div>
+</body>
+
+</html>
