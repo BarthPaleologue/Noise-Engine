@@ -151,7 +151,7 @@ void main() {
 		//finalColor = vec3(19.0, 27.0, 36.0) / 255.0;
 		finalColor = vec3(0.0);
 		for(int i = 0; i < nbLines; i++) {
-			if(near(noiseValue, float(i) * lineStep, 0.005)) finalColor = vec3(0.7);
+			if(near(noiseValue, float(i) * lineStep, 0.005)) finalColor = vec3(1.0);
 		}
 	} else {
 		finalColor = vec3(noiseValue);
