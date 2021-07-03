@@ -117,7 +117,7 @@ float completeNoise(vec3 coords, int octaves, float decay, float lacunarity) {
 	float noiseValue = 0.0;
 	float totalAmplitude = 0.0;
 	for(int i = 0; i < octaves; i++) {
-		noiseValue += normalNoise(coords * pow(lacunarity, float(i))) / pow(decay, float(i));
+		noiseValue += normalNoise(vec3(vec2(coords.x, coords.y) * pow(lacunarity, float(i)), coords.z)) / pow(decay, float(i));
 		totalAmplitude += 1.0 / pow(decay, float(i));
 	}
 	noiseValue /= totalAmplitude;

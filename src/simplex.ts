@@ -42,7 +42,7 @@ export class Simplex extends BABYLON.PostProcess {
         let time = 0.0;
 
         this.onBeforeRender = (effect: BABYLON.Effect) => {
-            time += 0.002;
+            time += 0.005;
             effect.setFloat("time", time);
             effect.setInt("nbOctaves", this.settings.nbOctaves);
             effect.setFloat("decay", this.settings.decay);
