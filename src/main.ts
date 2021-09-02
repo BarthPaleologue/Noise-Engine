@@ -71,11 +71,17 @@ let lacunaritySlider = new Slider("lacunaritySlider", document.getElementById("l
 });
 lacunaritySlider.update();
 
-let powerSlider = new Slider("powerSlider", document.getElementById("powerSliderContainer")!, 1, 100, pp.settings.lacunarity * 10, (val: number) => {
+let powerSlider = new Slider("powerSlider", document.getElementById("powerSliderContainer")!, 1, 100, pp.settings.power * 10, (val: number) => {
     pp.settings.power = val / 10;
     powerSlider.handle.innerHTML = String(val / 10);
 });
 powerSlider.update();
+
+let minValueSlider = new Slider("minValueSlider", document.getElementById("minValueSliderContainer")!, 0, 10, pp.settings.minValue * 10, (val: number) => {
+    pp.settings.minValue = val / 10;
+    minValueSlider.handle.innerHTML = String(val / 10);
+});
+minValueSlider.update();
 
 new Slider("domainWarpingSlider", document.getElementById("domainWarpingSliderContainer")!, 0, 10, pp.settings.nbDomainWarping, (val: number) => {
     pp.settings.nbDomainWarping = val;

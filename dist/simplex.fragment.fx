@@ -14,6 +14,7 @@ uniform float domainWarpingStrength;
 uniform float frequency;
 uniform bool showLevelLines;
 uniform int nbLines;
+uniform float minValue;
 
 /* https://www.shadertoy.com/view/XsX3zB
  *
@@ -113,7 +114,7 @@ float normalNoise(vec3 coords) {
     return 0.5 * (1.0 + simplex3d(coords));
 }
 
-float completeNoise(vec3 coords, int octaves, float decay, float lacunarity) {
+float completeNoise(vec3 coords, int octaves, float decay, float lacunarity, float minValue) {
 	float noiseValue = 0.0;
 	float totalAmplitude = 0.0;
 	for(int i = 0; i < octaves; i++) {
@@ -121,6 +122,10 @@ float completeNoise(vec3 coords, int octaves, float decay, float lacunarity) {
 		totalAmplitude += 1.0 / pow(decay, float(i));
 	}
 	noiseValue /= totalAmplitude;
+	
+	noiseValue = max(minValue, noiseValue) - minValue;
+	noiseValue /= 1.0 - minValue;
+	
 	return noiseValue;
 }
 
@@ -134,13 +139,13 @@ void main() {
 
 	for(int i = 0; i < nbDomainWarping; i++) {
 		samplePoint += domainWarpingStrength * vec3(
-			completeNoise(samplePoint, nbOctaves, decay, lacunarity), 
-			completeNoise(vec3(samplePoint.x + 13.0, samplePoint.y + 37.0, samplePoint.z - 73.0), nbOctaves, decay, lacunarity), 
+			completeNoise(samplePoint, nbOctaves, decay, lacunarity, 0.0), 
+			completeNoise(vec3(samplePoint.x + 13.0, samplePoint.y + 37.0, samplePoint.z - 73.0), nbOctaves, decay, lacunarity, 0.0), 
 			0.0
 		) / float(nbDomainWarping);
 	}
 
-    float noiseValue = completeNoise(samplePoint, nbOctaves, decay, lacunarity);
+    float noiseValue = completeNoise(samplePoint, nbOctaves, decay, lacunarity, minValue);
 
     noiseValue = pow(noiseValue, power);
 
@@ -159,5 +164,4 @@ void main() {
 	//finalColor *= vec3(1.0, 0.5, 0.0);
 
     gl_FragColor = vec4(finalColor, 1.0); // displaying the final color
-    
 }
