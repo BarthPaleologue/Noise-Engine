@@ -1,5 +1,5 @@
 
-interface simplexSettings {
+export interface noiseSettings {
     nbOctaves: number;
     decay: number;
     lacunarity: number;
@@ -10,12 +10,13 @@ interface simplexSettings {
     frequency: number;
     showLevelLines: boolean;
     nbLines: number;
+    absolute: boolean;
 }
 
-export class Simplex extends BABYLON.PostProcess {
-    settings: simplexSettings;
+export class Worley extends BABYLON.PostProcess {
+    settings: noiseSettings;
     constructor(name: string, camera: BABYLON.Camera, scene: BABYLON.Scene) {
-        super(name, "./simplex", [
+        super(name, "../shaders/worley", [
             "time",
             "nbOctaves",
             "decay",
@@ -26,7 +27,8 @@ export class Simplex extends BABYLON.PostProcess {
             "frequency",
             "showLevelLines",
             "nbLines",
-            "minValue"
+            "minValue",
+            "absolute"
         ], [], 1, camera, BABYLON.Texture.BILINEAR_SAMPLINGMODE, scene.getEngine());
 
         this.settings = {
@@ -40,6 +42,7 @@ export class Simplex extends BABYLON.PostProcess {
             frequency: 10,
             showLevelLines: false,
             nbLines: 5,
+            absolute: false,
         };
 
         let time = 0.0;
@@ -57,6 +60,7 @@ export class Simplex extends BABYLON.PostProcess {
             effect.setFloat("frequency", this.settings.frequency);
             effect.setBool("showLevelLines", this.settings.showLevelLines);
             effect.setInt("nbLines", this.settings.nbLines);
+            effect.setBool("absolute", this.settings.absolute);
         };
     }
 }
