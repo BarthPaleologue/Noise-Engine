@@ -1,6 +1,6 @@
 precision highp float;
 
-#define NUM_CELLS = 10.0
+#define NUM_CELLS 8.0
 
 // varying
 varying vec2 vUV; // screen coordinates
@@ -17,105 +17,168 @@ uniform float frequency;
 uniform bool showLevelLines;
 uniform int nbLines;
 uniform float minValue;
+uniform bool absolute;
 
 
-
-
-// Arbitrary random, can be replaced with a function of your choice
-float randWorley(vec2 co) {
-    return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
+// Permutation polynomial: (34x^2 + x) mod 289
+vec3 permute(vec3 x) {
+  return mod((34.0 * x + 1.0) * x, 289.0);
 }
 
-// Returns the point in a given cell
-vec2 get_cell_point(vec2 cell) {
-	vec2 cell_base = cell / NUM_CELLS;
-	float noise_x = randWorley(cell);
-    float noise_y = randWorley(cell.yx);
-    return cell_base + (0.5 + 1.5 * vec2(noise_x, noise_y)) / NUM_CELLS;
+vec3 dist(vec3 x, vec3 y, vec3 z,  bool manhattanDistance) {
+    return manhattanDistance ?  abs(x) + abs(y) + abs(z) :  (x * x + y * y + z * z);
 }
 
-// Performs worley noise by checking all adjacent cells
-// and comparing the distance to their points
-float worley2(vec2 coord) {
-    ivec2 cell = ivec2(coord * NUM_CELLS);
-    float dist = 1.0;
-    
-    // Search in the surrounding 5x5 cell block
-    for (int x = 0; x < 5; x++) { 
-        for (int y = 0; y < 5; y++) {
-        	vec2 cell_point = get_cell_point(cell + ivec2(x-2, y-2));
-            dist = min(dist, distance(cell_point, coord));
-        }
-    }
-    
-    dist /= length(vec2(1.0 / NUM_CELLS));
-    dist = 1.0 - dist;
-    return dist;
-}
+vec2 worley(vec3 P, float jitter, bool manhattanDistance) {
+    float K = 0.142857142857; // 1/7
+    float Ko = 0.428571428571; // 1/2-K/2
+    float  K2 = 0.020408163265306; // 1/(7*7)
+    float Kz = 0.166666666667; // 1/6
+    float Kzo = 0.416666666667; // 1/2-1/6*2
 
-#define LCG(k) k = (65 * k) % 1021
-#define lr(k) float(k)/1021.
+	vec3 Pi = mod(floor(P), 289.0);
+ 	vec3 Pf = fract(P) - 0.5;
 
-// permutation polynomial
+	vec3 Pfx = Pf.x + vec3(1.0, 0.0, -1.0);
+	vec3 Pfy = Pf.y + vec3(1.0, 0.0, -1.0);
+	vec3 Pfz = Pf.z + vec3(1.0, 0.0, -1.0);
 
-int permp (int i1, int i2){
-      int t = (i1 + i2) & 255;
-        
-      return ((112 * t + 153) * t + 151) & 255;
-}
+	vec3 p = permute(Pi.x + vec3(-1.0, 0.0, 1.0));
+	vec3 p1 = permute(p + Pi.y - 1.0);
+	vec3 p2 = permute(p + Pi.y);
+	vec3 p3 = permute(p + Pi.y + 1.0);
 
-// return the two closest distances for 3D Worley noise
+	vec3 p11 = permute(p1 + Pi.z - 1.0);
+	vec3 p12 = permute(p1 + Pi.z);
+	vec3 p13 = permute(p1 + Pi.z + 1.0);
 
-vec2 worley3(vec3 p) {
-    vec2 dl = vec2(20.0);
-    
-    float value = 20.0;
-    
-    ivec3 iv = ivec3(floor(p));
-    vec3 fv = fract(p);
-    
-    int j = 0; // initialization for Knuth's "algorithm L"
-    ivec3 di = ivec3(1), ki = -di;
-    ivec4 fi = ivec4(0, 1, 2, 3);
-    
-    // instead of writing a triply nested loop (!!)
-    // generate the indices for the neighbors in Gray order (Knuth's "algorithm L")
-    // see section 7.2.1.1 of TAOCP, Volume 4A or https://doi.org/10.1145/360336.360343
-    
-	for (int k = 0; k < 27; k++) // loop through all neighbors
-    { 
-		 // seeding
-        int s = permp(permp(permp(0, iv.z + ki.z), iv.y + ki.y), iv.x + ki.x); LCG(s);
-            
-		 for (int m = 0; m < 2; m++) // two points per cell
-             {
-                // generate feature points within the cell
-                LCG(s); float sz = lr(s);
-                LCG(s); float sy = lr(s);
-                LCG(s); float sx = lr(s);
-                
-                vec3 tp = vec3(ki) + vec3(sx, sy, sz) - fv;
-                float c = dot(tp, tp); // Euclidean metric
-                
-                float m1 = min(c, dl.x); // ranked distances
-                dl = vec2(min(m1, dl.y), max(m1, min(max(c, dl.x), dl.y)));
-             }
-        
-        // updating steps for Knuth's "algorithm L"
-        j = fi[0]; fi[0] = 0; ki[2 - j] += di[j];
-        if ((ki[2 - j] & 1) == 1) {
-            di[j] = -di[j];
-            fi[j] = fi[j + 1]; fi[j + 1] = j + 1;
-        }
-	}
-    
-    dl = sqrt(dl); // don't forget to root at the end for Euclidean distance
-        
-    return dl;
+	vec3 p21 = permute(p2 + Pi.z - 1.0);
+	vec3 p22 = permute(p2 + Pi.z);
+	vec3 p23 = permute(p2 + Pi.z + 1.0);
+
+	vec3 p31 = permute(p3 + Pi.z - 1.0);
+	vec3 p32 = permute(p3 + Pi.z);
+	vec3 p33 = permute(p3 + Pi.z + 1.0);
+
+	vec3 ox11 = fract(p11*K) - Ko;
+	vec3 oy11 = mod(floor(p11*K), 7.0)*K - Ko;
+	vec3 oz11 = floor(p11*K2)*Kz - Kzo; // p11 < 289 guaranteed
+
+	vec3 ox12 = fract(p12*K) - Ko;
+	vec3 oy12 = mod(floor(p12*K), 7.0)*K - Ko;
+	vec3 oz12 = floor(p12*K2)*Kz - Kzo;
+
+	vec3 ox13 = fract(p13*K) - Ko;
+	vec3 oy13 = mod(floor(p13*K), 7.0)*K - Ko;
+	vec3 oz13 = floor(p13*K2)*Kz - Kzo;
+
+	vec3 ox21 = fract(p21*K) - Ko;
+	vec3 oy21 = mod(floor(p21*K), 7.0)*K - Ko;
+	vec3 oz21 = floor(p21*K2)*Kz - Kzo;
+
+	vec3 ox22 = fract(p22*K) - Ko;
+	vec3 oy22 = mod(floor(p22*K), 7.0)*K - Ko;
+	vec3 oz22 = floor(p22*K2)*Kz - Kzo;
+
+	vec3 ox23 = fract(p23*K) - Ko;
+	vec3 oy23 = mod(floor(p23*K), 7.0)*K - Ko;
+	vec3 oz23 = floor(p23*K2)*Kz - Kzo;
+
+	vec3 ox31 = fract(p31*K) - Ko;
+	vec3 oy31 = mod(floor(p31*K), 7.0)*K - Ko;
+	vec3 oz31 = floor(p31*K2)*Kz - Kzo;
+
+	vec3 ox32 = fract(p32*K) - Ko;
+	vec3 oy32 = mod(floor(p32*K), 7.0)*K - Ko;
+	vec3 oz32 = floor(p32*K2)*Kz - Kzo;
+
+	vec3 ox33 = fract(p33*K) - Ko;
+	vec3 oy33 = mod(floor(p33*K), 7.0)*K - Ko;
+	vec3 oz33 = floor(p33*K2)*Kz - Kzo;
+
+	vec3 dx11 = Pfx + jitter*ox11;
+	vec3 dy11 = Pfy.x + jitter*oy11;
+	vec3 dz11 = Pfz.x + jitter*oz11;
+
+	vec3 dx12 = Pfx + jitter*ox12;
+	vec3 dy12 = Pfy.x + jitter*oy12;
+	vec3 dz12 = Pfz.y + jitter*oz12;
+
+	vec3 dx13 = Pfx + jitter*ox13;
+	vec3 dy13 = Pfy.x + jitter*oy13;
+	vec3 dz13 = Pfz.z + jitter*oz13;
+
+	vec3 dx21 = Pfx + jitter*ox21;
+	vec3 dy21 = Pfy.y + jitter*oy21;
+	vec3 dz21 = Pfz.x + jitter*oz21;
+
+	vec3 dx22 = Pfx + jitter*ox22;
+	vec3 dy22 = Pfy.y + jitter*oy22;
+	vec3 dz22 = Pfz.y + jitter*oz22;
+
+	vec3 dx23 = Pfx + jitter*ox23;
+	vec3 dy23 = Pfy.y + jitter*oy23;
+	vec3 dz23 = Pfz.z + jitter*oz23;
+
+	vec3 dx31 = Pfx + jitter*ox31;
+	vec3 dy31 = Pfy.z + jitter*oy31;
+	vec3 dz31 = Pfz.x + jitter*oz31;
+
+	vec3 dx32 = Pfx + jitter*ox32;
+	vec3 dy32 = Pfy.z + jitter*oy32;
+	vec3 dz32 = Pfz.y + jitter*oz32;
+
+	vec3 dx33 = Pfx + jitter*ox33;
+	vec3 dy33 = Pfy.z + jitter*oy33;
+	vec3 dz33 = Pfz.z + jitter*oz33;
+
+	vec3 d11 = dist(dx11, dy11, dz11, manhattanDistance);
+	vec3 d12 =dist(dx12, dy12, dz12, manhattanDistance);
+	vec3 d13 = dist(dx13, dy13, dz13, manhattanDistance);
+	vec3 d21 = dist(dx21, dy21, dz21, manhattanDistance);
+	vec3 d22 = dist(dx22, dy22, dz22, manhattanDistance);
+	vec3 d23 = dist(dx23, dy23, dz23, manhattanDistance);
+	vec3 d31 = dist(dx31, dy31, dz31, manhattanDistance);
+	vec3 d32 = dist(dx32, dy32, dz32, manhattanDistance);
+	vec3 d33 = dist(dx33, dy33, dz33, manhattanDistance);
+
+	vec3 d1a = min(d11, d12);
+	d12 = max(d11, d12);
+	d11 = min(d1a, d13); // Smallest now not in d12 or d13
+	d13 = max(d1a, d13);
+	d12 = min(d12, d13); // 2nd smallest now not in d13
+	vec3 d2a = min(d21, d22);
+	d22 = max(d21, d22);
+	d21 = min(d2a, d23); // Smallest now not in d22 or d23
+	d23 = max(d2a, d23);
+	d22 = min(d22, d23); // 2nd smallest now not in d23
+	vec3 d3a = min(d31, d32);
+	d32 = max(d31, d32);
+	d31 = min(d3a, d33); // Smallest now not in d32 or d33
+	d33 = max(d3a, d33);
+	d32 = min(d32, d33); // 2nd smallest now not in d33
+	vec3 da = min(d11, d21);
+	d21 = max(d11, d21);
+	d11 = min(da, d31); // Smallest now in d11
+	d31 = max(da, d31); // 2nd smallest now not in d31
+	d11.xy = (d11.x < d11.y) ? d11.xy : d11.yx;
+	d11.xz = (d11.x < d11.z) ? d11.xz : d11.zx; // d11.x now smallest
+	d12 = min(d12, d21); // 2nd smallest now not in d21
+	d12 = min(d12, d22); // nor in d22
+	d12 = min(d12, d31); // nor in d31
+	d12 = min(d12, d32); // nor in d32
+	d11.yz = min(d11.yz,d12.xy); // nor in d12.yz
+	d11.y = min(d11.y,d12.z); // Only two more to go
+	d11.y = min(d11.y,d11.z); // Done! (Phew!)
+	return sqrt(d11.xy); // F1, F2
 }
 
 float normalNoise(vec3 coords) {
-    return 0.5 * (1.0 + worley2(coords.xy));
+    if(!absolute) {
+        return worley(coords, 1.0, false).x;
+    } else {
+        return abs(worley(coords, 1.0, false).x - 0.5) * 2.0;
+    }
 }
 
 float completeNoise(vec3 coords, int octaves, float decay, float lacunarity, float minValue) {

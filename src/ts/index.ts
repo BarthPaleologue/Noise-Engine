@@ -5,6 +5,8 @@ import * as sliderStyle from "../sliderjs/style2.min.css";
 import { Worley } from "./postProcesses/worley";
 import { Value } from "./postProcesses/value";
 
+import "../sliderjs/slider.min.js";
+
 style.default;
 sliderStyle.default;
 

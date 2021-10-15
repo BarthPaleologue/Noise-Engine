@@ -15,6 +15,7 @@ uniform float frequency;
 uniform bool showLevelLines;
 uniform int nbLines;
 uniform float minValue;
+uniform bool absolute;
 
 /* https://www.shadertoy.com/view/XsX3zB
  *
@@ -111,7 +112,11 @@ float simplex3d(vec3 p) {
 }
 
 float normalNoise(vec3 coords) {
-    return 0.5 * (1.0 + simplex3d(coords));
+	if(!absolute) {
+    	return 0.5 * (1.0 + simplex3d(coords));
+	} else {
+		return abs(simplex3d(coords));
+	}
 }
 
 float completeNoise(vec3 coords, int octaves, float decay, float lacunarity, float minValue) {
