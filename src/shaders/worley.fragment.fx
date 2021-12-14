@@ -177,7 +177,7 @@ float normalNoise(vec3 coords) {
     if(!absolute) {
         return worley(coords, 1.0, false).x;
     } else {
-        return abs(worley(coords, 1.0, false).x - 0.5) * 2.0;
+        return abs((worley(coords, 1.0, false).x - 0.5) * 2.0);
     }
 }
 
