@@ -18,6 +18,7 @@ uniform bool showLevelLines;
 uniform int nbLines;
 uniform float minValue;
 uniform bool absolute;
+uniform bool inverted;
 
 
 // Permutation polynomial: (34x^2 + x) mod 289
@@ -227,6 +228,7 @@ void main() {
 		}
 	} else {
 		finalColor = vec3(noiseValue);
+		if(inverted) finalColor = vec3(1.0) - finalColor;
 	}
 	//finalColor *= vec3(1.0, 0.5, 0.0);
 

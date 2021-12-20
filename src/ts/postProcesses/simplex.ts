@@ -15,7 +15,8 @@ export class Simplex extends BABYLON.PostProcess {
             "showLevelLines",
             "nbLines",
             "minValue",
-            "absolute"
+            "absolute",
+            "inverted"
         ], [], 1, camera, BABYLON.Texture.BILINEAR_SAMPLINGMODE, scene.getEngine());
 
         this.settings = {
@@ -30,6 +31,7 @@ export class Simplex extends BABYLON.PostProcess {
             showLevelLines: false,
             nbLines: 5,
             absolute: false,
+            inverted: false
         };
 
         let time = 0.0;
@@ -48,6 +50,7 @@ export class Simplex extends BABYLON.PostProcess {
             effect.setBool("showLevelLines", this.settings.showLevelLines);
             effect.setInt("nbLines", this.settings.nbLines);
             effect.setBool("absolute", this.settings.absolute);
+            effect.setBool("inverted", this.settings.inverted);
         };
     }
 }

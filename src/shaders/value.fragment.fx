@@ -16,6 +16,7 @@ uniform bool showLevelLines;
 uniform int nbLines;
 uniform float minValue;
 uniform bool absolute;
+uniform bool inverted;
 
 
 float hash(float p) { p = fract(p * 0.011); p *= p + 7.5; p *= p + p; return fract(p); }
@@ -95,6 +96,7 @@ void main() {
 		}
 	} else {
 		finalColor = vec3(noiseValue);
+		if(inverted) finalColor = vec3(1.0) - finalColor;
 	}
 	//finalColor *= vec3(1.0, 0.5, 0.0);
 

@@ -49,6 +49,7 @@ function switchPP(newPP: noisePostProcess): void {
 
     pp.settings.showLevelLines = (<HTMLInputElement>document.querySelectorAll("input[type='checkbox']")[0]).checked;
     pp.settings.absolute = (<HTMLInputElement>document.querySelectorAll("input[type='checkbox']")[1]).checked;
+    pp.settings.inverted = (<HTMLInputElement>document.querySelectorAll("input[type='checkbox']")[2]).checked;
 
     for (let slider of sliders) {
         slider.update();
@@ -146,6 +147,12 @@ document.getElementById("AbsoluteToggler")?.addEventListener("click", () => {
     let checkbox = document.querySelectorAll("input[type='checkbox']")[1] as HTMLInputElement;
     checkbox.checked = !checkbox.checked;
     pp.settings.absolute = checkbox.checked;
+});
+
+document.getElementById("InvertedToggler")?.addEventListener("click", () => {
+    let checkbox = document.querySelectorAll("input[type='checkbox']")[2] as HTMLInputElement;
+    checkbox.checked = !checkbox.checked;
+    pp.settings.inverted = checkbox.checked;
 });
 
 document.getElementById("selector")?.addEventListener("change", function () {
