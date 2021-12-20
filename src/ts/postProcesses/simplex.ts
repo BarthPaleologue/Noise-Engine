@@ -3,7 +3,7 @@ import { noiseSettings } from "./worley";
 export class Simplex extends BABYLON.PostProcess {
     settings: noiseSettings;
     constructor(name: string, camera: BABYLON.Camera, scene: BABYLON.Scene) {
-        super(name, "../shaders/simplex", [
+        super(name, "./shaders/simplex", [
             "time",
             "nbOctaves",
             "decay",

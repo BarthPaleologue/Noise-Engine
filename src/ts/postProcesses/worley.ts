@@ -17,7 +17,7 @@ export interface noiseSettings {
 export class Worley extends BABYLON.PostProcess {
     settings: noiseSettings;
     constructor(name: string, camera: BABYLON.Camera, scene: BABYLON.Scene) {
-        super(name, "../shaders/worley", [
+        super(name, "./shaders/worley", [
             "time",
             "nbOctaves",
             "decay",

@@ -3,7 +3,7 @@ import { noiseSettings } from "./worley";
 export class Value extends BABYLON.PostProcess {
     settings: noiseSettings;
     constructor(name: string, camera: BABYLON.Camera, scene: BABYLON.Scene) {
-        super(name, "../shaders/value", [
+        super(name, "./shaders/value", [
             "time",
             "nbOctaves",
             "decay",
