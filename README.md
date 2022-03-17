@@ -1,5 +1,6 @@
 # Noise Engine
 
+[![pages-build-deployment](https://github.com/BarthPaleologue/Noise-Engine/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/BarthPaleologue/Noise-Engine/actions/workflows/pages/pages-build-deployment)
 [![CodeQL](https://github.com/BarthPaleologue/Noise-Engine/actions/workflows/codeql.yml/badge.svg)](https://github.com/BarthPaleologue/Noise-Engine/actions/workflows/codeql.yml)
 [![License](https://img.shields.io/github/license/BarthPaleologue/Noise-Engine)](./LICENSE)
 
