@@ -6,7 +6,7 @@ import { Value } from "./postProcesses/value";
 
 import { Color4, Engine, FreeCamera, Scene, Tools, Vector3 } from "@babylonjs/core";
 
-import { Slider } from "handle-sliderjs/dist/slider";
+import { Slider } from "handle-sliderjs";
 import * as sliderStyle from "handle-sliderjs/dist/css/style2.css";
 
 style.default;
