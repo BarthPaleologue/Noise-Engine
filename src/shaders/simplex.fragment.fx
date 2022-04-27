@@ -128,6 +128,8 @@ float completeNoise(vec3 coords, int octaves, float decay, float lacunarity, flo
 		totalAmplitude += 1.0 / pow(decay, float(i));
 	}
 	noiseValue /= totalAmplitude;
+
+	if(inverted) noiseValue = 1.0 - noiseValue;
 	
 	noiseValue = max(minValue, noiseValue) - minValue;
 	noiseValue /= 1.0 - minValue;
@@ -166,7 +168,6 @@ void main() {
 		}
 	} else {
 		finalColor = vec3(noiseValue);
-		if(inverted) finalColor = vec3(1.0) - finalColor;
 	}
 
     gl_FragColor = vec4(finalColor, 1.0); // displaying the final color
