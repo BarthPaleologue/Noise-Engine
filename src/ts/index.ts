@@ -1,11 +1,13 @@
 import { Simplex } from "./postProcesses/simplex";
 
 import * as style from "../styles/style.scss";
-import * as sliderStyle from "../sliderjs/style2.min.css";
 import { Worley } from "./postProcesses/worley";
 import { Value } from "./postProcesses/value";
 
 import { Color4, Engine, FreeCamera, Scene, Tools, Vector3 } from "@babylonjs/core";
+
+import { Slider } from "handle-sliderjs/dist/slider";
+import * as sliderStyle from "handle-sliderjs/dist/css/style2.css";
 
 style.default;
 sliderStyle.default;
