@@ -17,6 +17,7 @@ uniform int nbLines;
 uniform float minValue;
 uniform bool absolute;
 uniform bool inverted;
+uniform bool fractalMultiplication;
 
 /* https://www.shadertoy.com/view/XsX3zB
  *
@@ -122,12 +123,18 @@ float normalNoise(vec3 coords) {
 
 float completeNoise(vec3 coords, int octaves, float decay, float lacunarity, float minValue) {
 	float noiseValue = 0.0;
+	if(fractalMultiplication) noiseValue = 1.0;
+
 	float totalAmplitude = 0.0;
 	for(int i = 0; i < octaves; i++) {
-		noiseValue += normalNoise(vec3(vec2(coords.x, coords.y) * pow(lacunarity, float(i)), coords.z)) / pow(decay, float(i));
+		if(!fractalMultiplication) noiseValue += normalNoise(vec3(vec2(coords.x, coords.y) * pow(lacunarity, float(i)), coords.z)) / pow(decay, float(i));
+		else noiseValue *= normalNoise(vec3(vec2(coords.x, coords.y) * pow(lacunarity, float(i)), coords.z)) / pow(decay, float(i));
+		
 		totalAmplitude += 1.0 / pow(decay, float(i));
 	}
-	noiseValue /= totalAmplitude;
+	
+	if(!fractalMultiplication) noiseValue /= totalAmplitude;
+	else noiseValue = pow(noiseValue, 1.0 / totalAmplitude);
 
 	if(inverted) noiseValue = 1.0 - noiseValue;
 	

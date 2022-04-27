@@ -11,4 +11,5 @@ export interface NoiseSettings {
     nbLines: number;
     absolute: boolean;
     inverted: boolean;
+    fractalMultiplication: boolean;
 }

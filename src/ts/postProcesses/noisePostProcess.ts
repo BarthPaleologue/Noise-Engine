@@ -18,7 +18,8 @@ export abstract class NoisePostProcess extends PostProcess {
             "nbLines",
             "minValue",
             "absolute",
-            "inverted"
+            "inverted",
+            "fractalMultiplication"
         ], [], 1, camera);
 
         this.settings = {
@@ -33,7 +34,8 @@ export abstract class NoisePostProcess extends PostProcess {
             showLevelLines: false,
             nbLines: 5,
             absolute: false,
-            inverted: false
+            inverted: false,
+            fractalMultiplication: false
         };
 
         let time = 0.0;
@@ -53,6 +55,7 @@ export abstract class NoisePostProcess extends PostProcess {
             effect.setInt("nbLines", this.settings.nbLines);
             effect.setBool("absolute", this.settings.absolute);
             effect.setBool("inverted", this.settings.inverted);
+            effect.setBool("fractalMultiplication", this.settings.fractalMultiplication);
         };
     }
 }
