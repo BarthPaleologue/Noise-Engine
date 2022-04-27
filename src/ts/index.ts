@@ -5,6 +5,8 @@ import * as sliderStyle from "../sliderjs/style2.min.css";
 import { Worley } from "./postProcesses/worley";
 import { Value } from "./postProcesses/value";
 
+import { Color4, Engine, FreeCamera, Scene, Tools, Vector3 } from "@babylonjs/core";
+
 import "../html/slider.min.js";
 
 style.default;
@@ -14,24 +16,24 @@ let canvas = document.getElementById("renderer") as HTMLCanvasElement;
 canvas.width = Math.min(window.innerHeight, window.innerWidth);
 canvas.height = canvas.width;
 
-let engine = new BABYLON.Engine(canvas);
+let engine = new Engine(canvas);
 engine.loadingScreen.displayLoadingUI();
 
-let scene = new BABYLON.Scene(engine);
-scene.clearColor = new BABYLON.Color4(0, 0, 0, 1);
+let scene = new Scene(engine);
+scene.clearColor = new Color4(0, 0, 0, 1);
 
-let freeCamera = new BABYLON.FreeCamera("freeCamera", new BABYLON.Vector3(0, 0, -200), scene);
+let freeCamera = new FreeCamera("freeCamera", new Vector3(0, 0, -200), scene);
 scene.activeCamera = freeCamera;
 
 type noisePostProcess = Simplex | Worley | Value;
 
 let ppDic: { [key: string]: noisePostProcess; } = {};
 
-let simplexPostProcess = new Simplex("simplex", freeCamera, scene);
+let simplexPostProcess = new Simplex("simplex", freeCamera);
 ppDic["simplex"] = simplexPostProcess;
-let worleyPostProcess = new Worley("worley", freeCamera, scene);
+let worleyPostProcess = new Worley("worley", freeCamera);
 ppDic["worley"] = worleyPostProcess;
-let valuePostProcess = new Value("value", freeCamera, scene);
+let valuePostProcess = new Value("value", freeCamera);
 ppDic["value"] = valuePostProcess;
 
 freeCamera.detachPostProcess(worleyPostProcess);
@@ -63,7 +65,7 @@ let pause = false;
 
 document.addEventListener("keydown", e => {
     if (e.key == "p") { // take screenshots
-        BABYLON.Tools.CreateScreenshotUsingRenderTarget(engine, scene.activeCamera!, { precision: 1 });
+        Tools.CreateScreenshotUsingRenderTarget(engine, scene.activeCamera!, { precision: 1 });
     } else if (e.key == "f") {
         console.log(Math.round(engine.getFps()));
     } else if (e.key == " ") {
